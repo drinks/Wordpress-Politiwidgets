@@ -149,8 +149,11 @@
                 }
             });
 
-        $('#sunlight_politiwidgets_color').after('<div id="colorpicker"></div>').next('#colorpicker')
-            .farbtastic('#sunlight_politiwidgets_color');
+        $('#sunlight_politiwidgets_color').each(function(){
+            $(this).after('<div id="colorpicker"></div>').next('#colorpicker')
+                .farbtastic('#sunlight_politiwidgets_color');
+        });
+
     });
 
 })(jQuery);

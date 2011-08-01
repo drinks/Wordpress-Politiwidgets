@@ -43,6 +43,11 @@ if (!class_exists('Politiwidgets')){
             $widget_base_uri = 'http://localhost:3000/embed?',
             $api_default_params = array( 'format' => 'json', ),
             $widget_meta_key,
+            $widget_sizes = array(
+                'lg' => '400x300',
+                'med' => '300x250',
+                'sm' => '160x300',
+            ),
             $widget_types = array(
                 'bio' => 'Business Card',
                 'bill' => 'Vote Report',
@@ -354,7 +359,7 @@ if (!class_exists('Politiwidgets')){
             elseif(isset($obj->votesmart_id)):
                 $url .= 'vst=' . $obj->votesmart_id . '&';
             endif;
-            $url .= 'color=' . $this->setting('color');
+            $url .= 'color=' . $this->_get_color('color');
 
             return $url;
         }
@@ -373,9 +378,96 @@ if (!class_exists('Politiwidgets')){
 
 }
 
-if (!class_exists('Politiwidgets_Widget')):
+if (!class_exists('PolitiwidgetsWidget')):
 
-    class Politiwidgets_Widget extends WP_Widget{
+    class PolitiwidgetsWidget extends WP_Widget{
+
+        var $plugin,
+            $defaults;
+
+        function PolitiwidgetsWidget(){
+            $this->__construct();
+        }
+
+        function __construct(){
+            global $Sunlight_Politiwidgets;
+            parent::WP_Widget(false, $name='Politiwidgets');
+            $this->plugin = isset($Sunlight_Politiwidgets) ? $Sunlight_Politiwidgets : new Politiwidgets();
+            $this->properties = array('bgd','vst','s','w','color','geolocate');
+        }
+
+        function widget($args, $instance){
+            extract($args);
+            $title = apply_filters('widget_title', $instance['title']);
+            $params = array();
+            foreach ($this->properties as $key):
+                $params[$key] = $instance[$key];
+            endforeach;
+            $params['color'] = $this->plugin->_get_color();
+            $qs = http_build_query($params);
+
+            echo $before_widget;
+            if ($title) echo $before_title . $title . $after_title;
+            echo "<script type='text/javascript' src='{$this->plugin->widget_base_uri}{$qs}' ></script>";
+            echo $after_widget;
+        }
+
+        function update($new_instance, $old_instance){
+            $instance = $old_instance;
+            $instance['title'] = strip_tags($new_instance['title']);
+            foreach ($this->properties as $key):
+                $instance[$key] = $new_instance[$key];
+            endforeach;
+
+            return $instance;
+        }
+
+        function form($instance){
+            $title = esc_attr($instance['title']);
+            foreach ($this->properties as $key):
+                $$key = esc_attr($instance[$key]);
+            endforeach;
+        ?>
+        <p>
+            <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
+            <input class="widefat" type="text" id="<?php echo $this->get_field_id('title'); ?>"
+                   name="<?php echo $this->get_field_name('title'); ?>" value="<?php echo $title; ?>" />
+        </p>
+        <?php foreach (array(
+            'bgd' => 'Bioguide ID',
+            'vst' => 'Votesmart ID',
+        ) as $slug => $title): ?>
+        <p>
+            <label for="<?php echo $this->get_field_id($slug); ?>"><?php _e($title . ':'); ?></label>
+            <input type="text" class="<?php echo $slug; ?>" id="<?php echo $this->get_field_id($slug); ?>"
+                   name="<?php echo $this->get_field_name($slug); ?>" value="<?php echo $$slug; ?>" />
+        </p>
+        <?php endforeach; ?>
+        <p>
+            <label for="<?php echo $this->get_field_id('w'); ?>"><?php _e('Widget Type:'); ?></label>
+            <select id="<?php echo $this->get_field_id('w'); ?>"
+                    name="<?php echo $this->get_field_name('w'); ?>">
+                <?php foreach ($this->plugin->widget_types as $slug => $title): ?>
+                    <option value=<?php echo $slug; ?> <?php selected($w, $slug); ?>><?php echo $title; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </p>
+        <p>
+            <label for="<?php echo $this->get_field_id('s'); ?>"><?php _e('Size:'); ?></label>
+            <select id="<?php echo $this->get_field_id('s'); ?>"
+                    name="<?php echo $this->get_field_name('s'); ?>">
+                <?php foreach ($this->plugin->widget_sizes as $slug => $title): ?>
+                    <option value=<?php echo $slug; ?> <?php selected($s, $slug); ?>><?php echo $title; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </p>
+        <p>
+            <label for="<?php echo $this->get_field_id('geolocate'); ?>"><?php _e('Geolocate:'); ?></label>
+            <input id="<?php echo $this->get_field_id('geolocate'); ?>" <?php checked($geolocate, 'true'); ?>
+                    name="<?php echo $this->get_field_name('geolocate'); ?>" value="true" type="checkbox" />
+        </p>
+        <?php
+        }
 
     }
 

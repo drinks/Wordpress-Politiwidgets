@@ -15,3 +15,4 @@ function install_politiwidgets(){
     $plugin = new Politiwidgets();
     $plugin->activate();
 }
+add_action('widgets_init', create_function('', 'return register_widget("PolitiwidgetsWidget");'));
