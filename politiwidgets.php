@@ -37,10 +37,8 @@ if (!class_exists('Politiwidgets')){
                           'type'=>'text',
                           'value'=>'1F83B5'),
             ),
-            // $search_base_uri = 'http://politiwidgets.com/search.json?',
-            // $widget_base_uri = 'http://politiwidgets.com/embed?',
-            $search_base_uri = 'http://widgets.sunlightlabs.com/search.json?',
-            $widget_base_uri = 'http://widgets.sunlightlabs.com/embed?',
+            $search_base_uri = 'http://politiwidgets.com/search.json?',
+            $widget_base_uri = 'http://politiwidgets.com/embed?',
             $api_default_params = array( 'format' => 'json', ),
             $widget_meta_key,
             $widget_sizes = array(
