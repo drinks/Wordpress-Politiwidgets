@@ -1,5 +1,4 @@
 <?php
-ini_set('display_errors', 1);
 if (!function_exists('http_build_query')):
     function http_build_query($query_data, $numeric_prefix='', $arg_separator='&'){
        $arr = array();
@@ -29,18 +28,19 @@ if (!class_exists('Politiwidgets')){
                     array('name'=>'Suggest widgets',
                           'type'=>'checkbox',
                           'value'=>true),
-                'always_on'=>
-                    array('name'=>'Include suggested widgets by default',
-                          'type'=>'checkbox',
-                          'value'=>false),
+                // 'always_on'=>
+                //     array('name'=>'Include suggested widgets by default',
+                //           'type'=>'checkbox',
+                //           'value'=>false),
                 'color'=>
                     array('name'=>'Base widget color',
                           'type'=>'text',
                           'value'=>'1F83B5'),
             ),
-            $api_base_uri = 'http://localhost:8000/api/v1',
-            $search_base_uri = 'http://localhost:3000/search.json?',
-            $widget_base_uri = 'http://localhost:3000/embed?',
+            // $search_base_uri = 'http://politiwidgets.com/search.json?',
+            // $widget_base_uri = 'http://politiwidgets.com/embed?',
+            $search_base_uri = 'http://widgets.sunlightlabs.com/search.json?',
+            $widget_base_uri = 'http://widgets.sunlightlabs.com/embed?',
             $api_default_params = array( 'format' => 'json', ),
             $widget_meta_key,
             $widget_sizes = array(
@@ -96,26 +96,22 @@ if (!class_exists('Politiwidgets')){
             if (!in_array($hook, array('edit.php', 'post.php', 'settings_page_sunlight_politiwidgets_settings_page'))) return;
 
             // css
-            wp_register_style('farbtastic', WP_PLUGIN_URL . '/' . basename(dirname(__FILE)) . '/css/farbtastic.css');
             wp_enqueue_style('farbtastic');
 
             wp_register_style('politiwidgets', WP_PLUGIN_URL . '/' . basename(dirname(__FILE__)) . '/css/politiwidgets.css');
             wp_enqueue_style('politiwidgets');
 
             // js
+            wp_enqueue_script('json2');
             wp_enqueue_script('jquery');
             wp_enqueue_script('jquery-ui-core');
+            wp_enqueue_script('jquery-ui-sortable');
             wp_enqueue_script('suggest');
+            wp_enqueue_script('farbtastic');
 
-            // json for everybody!
-            wp_register_script('json', WP_PLUGIN_URL . '/' . basename(dirname(__FILE__)) . '/js/json.js');
-            wp_enqueue_script('json');
 
             wp_register_script('jquery-template', WP_PLUGIN_URL . '/' . basename(dirname(__FILE__)) . '/js/jquery.tmpl.min.js');
             wp_enqueue_script('jquery-template');
-
-            wp_register_script('farbtastic', WP_PLUGIN_URL . '/' . basename(dirname(__FILE__)) . '/js/farbtastic.js');
-            wp_enqueue_script('farbtastic');
 
             wp_register_script('politiwidgets', WP_PLUGIN_URL . '/' . basename(dirname(__FILE__)) . '/js/politiwidgets.js');
             wp_enqueue_script('politiwidgets');
@@ -166,7 +162,7 @@ if (!class_exists('Politiwidgets')){
                 $content .= "\n" .
                             '<script type="text/javascript" src="' .
                             $widget->url .
-                            '"></script>';
+                            '&s=lg"></script>';
             endforeach;
             return $content;
         }

@@ -16,13 +16,10 @@
 #sunlight_politiwidgets input.button-primary{float:right;min-width:120px;text-align:center}
 
 
-/*#sunlight_politiwidgets_active_widgets ul{display:table;width:100%}*/
 #sunlight_politiwidgets_active_widgets ul{clear:left;padding-left:0;margin-left:0;}
 #sunlight_politiwidgets_active_widgets ul li{display:block;margin-left:1.5em;}
-#sunlight_politiwidgets_active_widgets ul li>a{width:150px;display:inline;display:inline-block;zoom:1}
-#sunlight_politiwidgets_active_widgets ul li.new{margin-left:0.5em;margin-top:1em;}
-#sunlight_politiwidgets_active_widgets ul li.new label{padding-right:1em;}
-/*#sunlight_politiwidgets_active_widgets ul li.new input.form-input-tip{width:208px;}*/
-
+#sunlight_politiwidgets_active_widgets ul li>a{width:150px;display:inline;display:inline-block;zoom:1;cursor:move}
+#sunlight_politiwidgets_active_widgets p.new{margin-left:0.5em;margin-top:1em;}
+#sunlight_politiwidgets_active_widgets p.new label{padding-right:1em;}
 
 .clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden;zoom:1;}

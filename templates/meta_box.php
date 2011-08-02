@@ -27,8 +27,8 @@ wp_nonce_field(plugin_basename(dirname(dirname(__FILE__))), $namespace . '_nonce
 </script>
 
 <!-- Below is rendered by the server -->
-<p class="heading"><strong>Suggestions for this post:</strong> (click to add)</p>
 <div id="<?php echo $namespace;?>_suggested_widgets" class="clearfix <?php if ($get_suggestions) echo 'query'; ?>">
+    <p class="heading"><strong>Suggestions for this post:</strong> (click to add)</p>
     <ul class="suggestions">
     <?php if ($suggested_widgets && is_array($suggested_widgets)) : ?>
         <?php foreach ($suggested_widgets as $slug => $widget) : ?>
@@ -64,12 +64,12 @@ wp_nonce_field(plugin_basename(dirname(dirname(__FILE__))), $namespace . '_nonce
                 <input type="hidden" name="<?php echo $widget_meta_key;?>[]" class="value" value="<?php echo htmlentities(json_encode($widget)); ?>" />
             </li>
         <?php endforeach; endif; ?>
-        <li class="new">
-            <label for="<?php echo $namespace, '_new_widget' ?>">Search for a widget:</label>
-            <input type="text" class="widget-url form-input-tip" autocomplete="off" id="<?php echo $namespace, '_new_widget'; ?>" value="" />
-            <input type="button" class="button tagadd" value="Add" />
-        </li>
     </ul>
+    <p class="new">
+        <label for="<?php echo $namespace, '_new_widget' ?>">Search for a widget:</label>
+        <input type="text" class="widget-url form-input-tip" autocomplete="off" id="<?php echo $namespace, '_new_widget'; ?>" value="" />
+        <input type="button" class="button tagadd" value="Add" />
+    </p>
 
 </div>
 <div class="buttons clearfix">

@@ -20,55 +20,63 @@
         },
         get_suggestions_for_post: function(){
             // loads the appropriate selection of widget suggestions into the post meta box
-            $(POLITIWIDGETS.selectors.root).find(POLITIWIDGETS.selectors.suggestions + '.query').each(function(){
+            $(POLITIWIDGETS.selectors.root).find(POLITIWIDGETS.selectors.suggestions + '.query ul').each(function(){
                 var post_id = $('#post_ID').val();
                 $(this).html('<img src="' + POLITIWIDGETS.urls.plugin + '/img/ajax-loader.gif" alt="loading" />')
-                    .load(POLITIWIDGETS.urls['ajax'] + 'action=suggested-widgets&post_id=' + post_id + ' ul.suggestions');
+                    .load(POLITIWIDGETS.urls['ajax'] + 'action=suggested-widgets&post_id=' + post_id + ' ul.suggestions li');
             });
         },
         add_widget: function(evt){
             // appends a widget element to the admin meta box for saving
-            evt.preventDefault();
-            var widget, resolver;
+            var tgt, widget, resolver, preventdefault=true;
 
-            if(evt.target.tagName.toLowerCase() == 'input'){
+            tgt = $(evt.target);
+            if(tgt.is('input.button.tagadd')){
                 // clicked the 'add' button
-                resolver = $(this).prev('.widget-url').val();
-            }else if(evt.target.tagName.toLowerCase() == 'a'){
+                resolver = tgt.prev('.widget-url').val();
+            }else if(tgt.is('input.button-primary')){
+                // clicked the update button
+                preventdefault = false;
+                resolver = $(POLITIWIDGETS.selectors.active + 'p.new input[type=text]').eq(0).val()
+            }else if(tgt.is('a')){
                 // clicked a suggestion
                 resolver = $.trim($(this).html());
             }
 
-            if (widget = POLITIWIDGETS._resolve_widget(resolver)){
-                $(this).prev('.widget-url').val('');
-                widget = $.extend(widget, {
-                    unique:'sun-' + new Date().valueOf(),
-                    data: JSON.stringify($.extend({}, widget, {type:widget['type']}))
-                });
-                $.tmpl($('#widget-line-item'), widget)
-                    .insertBefore($(POLITIWIDGETS.selectors.active + ' li:last'));
-                $(POLITIWIDGETS.selectors.suggestions)
-                    .find('.suggestion-'+widget['name'].toLowerCase().replace(' ', '-'))
-                        .addClass('added');
+            if(resolver){
+                if (widget = POLITIWIDGETS._resolve_widget(resolver)){
+                    $(this).prev('.widget-url').val('');
+                    widget = $.extend(widget, {
+                        unique:'sun-' + new Date().valueOf(),
+                        data: JSON.stringify($.extend({}, widget, {type:widget['type']}))
+                    });
+                    $.tmpl($('#widget-line-item'), widget)
+                        .appendTo($(POLITIWIDGETS.selectors.active + ' ul.tagchecklist'));
+                    $(POLITIWIDGETS.selectors.suggestions)
+                        .find(POLITIWIDGETS.slugify('.suggestion-'+widget['name']))
+                            .addClass('added');
 
-            }else{POLITIWIDGETS.flash_error('Could not find a widget for this name');}
+                }else{POLITIWIDGETS.flash_error('Could not find a widget for this name');}
+            }
+
+            if(preventdefault) evt.preventDefault();
         },
         delete_widget: function(evt){
             evt.preventDefault();
-            var line_item, post_id, value_to_delete, success;
+            var line_item, line_item_slug, same_siblings;
+
             line_item = $(evt.target).parents('li.active-widget').eq(0);
-            // post_id = $('#post_ID').val();
-            // value_to_delete = line_item.find('input.value').val();
-            // success = $.ajax(POLITIWIDGETS.urls['ajax'] + 'action=delete-widget'
-            //                                             + '&post_id=' + post_id
-            //                                             + '&old_value=' + encodeURIComponent(value_to_delete),
-            //                  { datatype:'json', async:false, timeout:5000 }).responseText;
-            // if(success){
-                line_item.remove();
-                $(POLITIWIDGETS.selectors.suggestions).find('.suggestion-' + success).removeClass('added');
-            // }else{
-                // POLITIWIDGETS.flash_error('There was an error removing this widget.');
-            // }
+            line_item_slug = POLITIWIDGETS.slugify(JSON.parse(line_item.find('input.value')
+                                                                       .eq(0)
+                                                                       .val()).name);
+            same_siblings = line_item.siblings().filter(function(){
+                return $(this).find('a').eq(1).html() == line_item.find('a').eq(1).html();
+            });
+            line_item.remove();
+            console.log(line_item_slug, same_siblings);
+
+            if(!same_siblings.length)
+                $(POLITIWIDGETS.selectors.suggestions).find('.suggestion-' + line_item_slug).removeClass('added');
 
         },
         change_widget_type: function(evt){
@@ -88,12 +96,15 @@
             // generic notification handler for the write page meta box
             alert(message);
         },
+        slugify: function(str){
+            return str.toLowerCase().replace(' ', '-');
+        },
         _resolve_widget: function(text){
             var post_id = $('#post_ID').val();
             // converts a name into a widget hash object
             var widget_json = $.ajax(POLITIWIDGETS.urls['ajax'] + 'action=add-widget&post_id=' + post_id
                                                                 + '&q=' + encodeURIComponent(text),
-                                 { datatype:'json', async:false, timeout:5000 }).responseText;
+                                     { datatype:'json', async:false, timeout:5000 }).responseText;
 
             if (widget_json){
                 return $.parseJSON(widget_json);
@@ -119,16 +130,16 @@
             return params;
         }
 
-
     }.init();
 
-    // bootstrap on domready
+    // domready bootstrap
     $(function(){
         // get suggested tags
         POLITIWIDGETS.get_suggestions_for_post();
 
-        // bind add button,
-        $(POLITIWIDGETS.selectors.root).find('.button.tagadd').click(POLITIWIDGETS.add_widget);
+        // bind add/update buttons,
+        $(POLITIWIDGETS.selectors.root).find('input.button.tagadd, input.button-primary').click(POLITIWIDGETS.add_widget);
+
         // and suggestion tags
         $(POLITIWIDGETS.selectors.suggestions + ' ul.suggestions>li>a.widget').live('click', POLITIWIDGETS.add_widget);
 
@@ -137,6 +148,9 @@
 
         // bind type change
         $(POLITIWIDGETS.selectors.active).find('li.active-widget select').live('change', POLITIWIDGETS.change_widget_type);
+
+        // make the active list sortable
+        $(POLITIWIDGETS.selectors.active).find('ul').sortable({handle: 'a:eq(1)', axis: 'y'});
 
         // bind search suggest
         $(POLITIWIDGETS.selectors.root).find('.form-input-tip')

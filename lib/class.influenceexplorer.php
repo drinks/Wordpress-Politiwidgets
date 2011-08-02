@@ -15,7 +15,6 @@ if (!class_exists('InfluenceExplorer')) {
 
         function __construct($apikey=null){
             if ($apikey) $this->apikey = $apikey;
-            // $this->connection = new Snoopy;
             $this->baseurl = 'https://inbox.influenceexplorer.com';
             $this->api_default_params = array('apikey'=>$this->apikey);
         }
@@ -33,7 +32,6 @@ if (!class_exists('InfluenceExplorer')) {
         }
 
         function post($url, $data){
-            // $protocol = parse_url($url, PHP_URL_SCHEME);
             $this->connection = curl_init();
             curl_setopt($this->connection, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($this->connection, CURLOPT_FOLLOWLOCATION, true);
