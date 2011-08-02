@@ -154,7 +154,7 @@
 
         // bind search suggest
         $(POLITIWIDGETS.selectors.root).find('.form-input-tip')
-            .suggest(POLITIWIDGETS.urls['ajax'] + 'action=widget-search', {minchars:3, delay:250})
+            .suggest(POLITIWIDGETS.urls['ajax'] + 'action=widget-search', {minchars:2, delay:250})
             .keydown(function(evt){
                 if(evt.keyCode == 13){
                     evt.preventDefault();
