@@ -6,7 +6,7 @@ Description: Embed helper for integrating with PolitiWidgets from the Sunlight F
 Version: 0.1
 Author: The Sunlight Foundation
 Author URI: http://sunlightlabs.com
-License: MIT
+License: BSD
 */
 include_once('politiwidgets.php');
 
