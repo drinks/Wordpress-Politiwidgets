@@ -1,6 +1,9 @@
 <?php
-require_once(dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])))) . '/wp-config.php');
-
+try{
+    require_once(dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])))) . '/wp-config.php');
+}catch(Exception $e){
+    require_once(dirname(dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME']))))) . '/wp-config.php');
+}
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : false;
 $post_id = (isset($_REQUEST['post_id']) && ctype_digit($_REQUEST['post_id'])) ? $_REQUEST['post_id'] : false;
 $search_text = isset($_REQUEST['q']) ? wp_kses($_REQUEST['q'], array()) : false;

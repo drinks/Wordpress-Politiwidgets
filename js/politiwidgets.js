@@ -5,7 +5,7 @@
             // initializes vars
             this.urls = {
                 'widget': 'http://politiwidgets.com/embed?',
-                'plugin': '/wordpress/wp-content/plugins/wordpress-politiwidgets',
+                'plugin': window.userSettings.url + 'wp-content/plugins/wordpress-politiwidgets',
                 'sunlight': 'http://services.sunlightlabs.com/api/legislators.get.json?'
             };
             this.selectors = {
