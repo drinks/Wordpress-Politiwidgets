@@ -37,10 +37,8 @@ if (!class_exists('Politiwidgets')){
                           'type'=>'text',
                           'value'=>'1F83B5'),
             ),
-            // $search_base_uri = 'http://politiwidgets.com/search.json?',
-            // $widget_base_uri = 'http://politiwidgets.com/embed?',
-            $search_base_uri = 'http://widgets.sunlightlabs.com/search.json?',
-            $widget_base_uri = 'http://widgets.sunlightlabs.com/embed?',
+            $search_base_uri = 'http://politiwidgets.com/search.json?',
+            $widget_base_uri = 'http://politiwidgets.com/embed?',
             $api_default_params = array( 'format' => 'json', ),
             $widget_meta_key,
             $widget_sizes = array(
@@ -175,6 +173,9 @@ if (!class_exists('Politiwidgets')){
             if (!current_user_can('edit_post', $post_id)) return false;
 
             $post = get_post($post_id);
+            $posted_widgets = $_REQUEST[$this->widget_meta_key];
+            if (!is_array($posted_widgets))
+                $posted_widgets = Array();
 
             // Run this block only when we save explicitly
             if (!wp_is_post_revision($post)):
@@ -186,7 +187,7 @@ if (!class_exists('Politiwidgets')){
                 endif;
 
                 // get all attached widgets
-                $new_widgets = array_map(array(&$this, '_decode_widget'), $_REQUEST[$this->widget_meta_key]);
+                $new_widgets = array_map(array(&$this, '_decode_widget'), $posted_widgets);
 
                 // delete old widgets for this post
                 delete_post_meta($post->ID, $this->widget_meta_key);
