@@ -143,6 +143,7 @@ if (!class_exists('Politiwidgets')){
                              'widget_types'=>$this->widget_types,
                              'candidate_widgets'=>$this->candidate_widgets,
                              'incumbent_widgets'=>$this->incumbent_widgets,);
+
             uTemplate::render(dirname(__FILE__) . '/templates/meta_box.php', $context);
         }
 
@@ -256,7 +257,12 @@ if (!class_exists('Politiwidgets')){
 
             $context = array('active_widgets'=>$active_widgets,
                              'suggested_widgets'=>$suggested_widgets,
-                             'namespace', $this->namespace,);
+                             'namespace'=>$this->namespace,
+                             'get_suggestions'=>$this->setting('suggest'),
+                             'widget_meta_key'=>$this->widget_meta_key,
+                             'widget_types'=>$this->widget_types,
+                             'candidate_widgets'=>$this->candidate_widgets,
+                             'incumbent_widgets'=>$this->incumbent_widgets,);
 
             $html = uTemplate::parse(dirname(__FILE__) . '/templates/meta_box.php', $context);
 
@@ -315,6 +321,7 @@ if (!class_exists('Politiwidgets')){
             else:
                 $text = $post_or_string_or_id;
             endif;
+
             $widgets = array();
             $entities = $this->_entities_via_influenceexplorer($text);
             foreach ($entities as $entity):
@@ -325,6 +332,9 @@ if (!class_exists('Politiwidgets')){
         }
 
         function _entities_via_influenceexplorer($content){
+            // remove high-ascii for entity extraction. not great.
+            $content = preg_replace("/[^\x9\xA\xD\x20-\x7F]/", " ", $content);
+
             $response = is_object($this->influenceexplorer) ?
                 $this->influenceexplorer->contextualize($content) :
                 false;
