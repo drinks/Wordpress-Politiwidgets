@@ -37,8 +37,10 @@ if (!class_exists('Politiwidgets')){
                           'type'=>'text',
                           'value'=>'1F83B5'),
             ),
-            $search_base_uri = 'http://politiwidgets.com/search.json?',
-            $widget_base_uri = 'http://politiwidgets.com/embed?',
+            // $search_base_uri = 'http://politiwidgets.com/search.json?',
+            // $widget_base_uri = 'http://politiwidgets.com/embed?',
+            $search_base_uri = 'http://widgets.sunlightlabs.com/search.json?',
+            $widget_base_uri = 'http://widgets.sunlightlabs.com/embed?',
             $api_default_params = array( 'format' => 'json', ),
             $widget_meta_key,
             $widget_sizes = array(
@@ -362,9 +364,9 @@ if (!class_exists('Politiwidgets')){
 
             $url = $this->widget_base_uri . 'w=bio&';
             if(isset($obj->bioguide_id)):
-                $url .= 'bgd=' . $obj->bioguide_id . '&';
+                $url .= 'legislator=' . $obj->bioguide_id . '&';
             elseif(isset($obj->votesmart_id)):
-                $url .= 'vst=' . $obj->votesmart_id . '&';
+                $url .= 'legislator=' . $obj->votesmart_id . '&';
             endif;
             $url .= 'color=' . $this->_get_color('color');
 
